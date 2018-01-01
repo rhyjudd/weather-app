@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="weatherStyle.css">
+    <title>Local Weather</title>
+</head>
+<body class='flex-container' onLoad='getLocation()'>
+
+
+    <div class='section' >
+        <div ><h1 id='location'></h1></div>
+        <br>
+        <div><img src="" id='weatherIcon'></div>  
+        <div><h1 id='currentTemp'></h1></div> 
+        <div><h4 id='highTemp'></h4></div>
+        <div><h4 id='lowTemp'></h4></div>
+        <br>             
+        <div class='std-btn' id='getForecast'>Get Local Conditions</div>
+    </div>
+   
+
+
+
+    <script>
+            var x = document.getElementById('location');
+            var lat;
+            var long;
+            var name;
+            var temp;
+            var high;
+            var low;
+            var switchState;
+            var icon;
+            
+            function convertToFahrenheit(celsius){
+                return (celsius*1.8)+32;
+            }
+
+            function getLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                    
+                } else { 
+                    x.innerHTML = "Geolocation is not supported by this browser.";
+                }
+            }
+            
+            function showPosition(position) {
+                lat =  position.coords.latitude; 
+                long = position.coords.longitude;
+                                            
+            }
+
+            function  retrieveForecast(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET',`https://fcc-weather-api.glitch.me/api/current?lat=${lat}&lon=${long}`, true);
+
+            xhr.onload = function(){
+                if(this.status == 200){
+                    var forecast = JSON.parse(this.responseText);
+                    name = forecast.name;
+                    temp = ((forecast.main.temp)*1.8)+32;
+                    high = ((forecast.main.temp_max)*1.8)+32;
+                    low = ((forecast.main.temp_min)*1.8)+32;
+                    icon = forecast.weather[0].icon;
+                    }
+                    document.getElementById('location').innerHTML = name;
+                    document.getElementById('currentTemp').innerHTML = `${temp} F`; 
+                    document.getElementById('weatherIcon').src = icon;
+                    document.getElementById('highTemp').innerHTML = `High: ${high} F`;
+                    document.getElementById('lowTemp').innerHTML = `Low: ${low} F`;
+                                  
+
+
+                
+                
+            }
+            xhr.send();
+        }
+
+        
+
+
+document.getElementById('getForecast').addEventListener('click', retrieveForecast);
+            
+
+             
+            </script>
+    
+</body>
+</html>

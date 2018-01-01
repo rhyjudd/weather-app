@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="weather-icons.css">   
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
+    
+
+    <style>
+
+    .flex-container{
+        height: 100vh;
+        background-size: cover;
+        background-position: center;
+        display:flex;
+        flex-direction: column;
+        justify-content: bottom;
+        align-items: center;
+        text-align: center;
+        font-family: 'Montserrat', sans-serif;
+        background: #fff;
+        color: #186be7;
+    }
+
+    .section{
+        background: #fff;
+        margin: 20px;
+        padding: 20px;
+        /*border-radius: 10px;*/
+        /*min-height: 250px;*/    
+        min-width: 300px;
+        box-shadow: 1px 1px 5px #757181;
+        color: #186be7;
+        
+    }
+
+
+
+    #icon{
+        transform:scale(2,2);    
+    }
+
+    .metric{
+        display:none;
+    }
+
+    .empirical{
+        display:inline;
+
+    }
+
+    footer{
+        font-size: .75em;
+        
+    }
+    </style>
+
+    <title>Local Weather App</title>
+</head>
+<body onLoad='getLocation()'>
+    <div class='flex-container'>
+    <!-- <div id='banner'> <!-- This section of the page is the landing page for the user, they should see a search box and a button upon arrival 
+            <input type='text' placeholder='city of zip...'></input>
+            <button><i class="fas fa-search"></i>Search</button>
+    </div>-->
+    <div class='section' id='main'>
+            <p ><h2><span  id='location'></span></h2></p>
+            <p ><h3><span  id='description'></span></h3></p>
+            <p id='iconPlaceholder'><i class="wi " id='icon' ></i></p>
+            <p ><span class='metric' id='tempM'></span><span class='empirical' id='temperature'></span></p>
+            <p ><span class='metric' id='rangeM'></span><span class='empirical'id='range'></span></p>
+            <p ><span class='metric' id='windM'></span><span class='empirical' id='wind'></span></p>
+            <p >Humidity:<span id='humidity'></span></p>
+            <p >Barometric Pressure:<span class='metric' id='pressureM'></span><span class='empirical' id='pressure'></span></p>
+            <p >Visibiltiy:<span class='metric' id='visibilityM'></span><span class='empirical' id='visibility'></span></p>
+            <p >Dewpoint:<span class='metric' id='dewpointM'></span><span class='empirical' id='dewPoint'></span></p>
+         
+    </div>
+
+    <!--<div id='sectionC'><!-- This section contains the three day forecast for the area
+        <div id='dayOne'>
+            <p>#icon</p>
+            <p>#description</p>
+            <p>#hi/low</p>
+        </div>
+        <div id='dayTwo'>
+            <p>#icon</p>
+            <p>#description</p>
+            <p>#hi/low</p>
+        </div>
+        <div id='dayThree'>
+            <p>#icon</p>
+            <p>#description</p>
+            <p>#hi/low</p>
+        </div>
+    </div> -->
+
+    
+    <footer>
+        <div class='section'>
+        <p>Coded by Rhyan Judd.</p>
+        <p>Icons created by <a href="https://erikflowers.github.io/weather-icons/">Erik Flowers.</a></p>
+        <p>Data obtained through the</p>
+        <p> Weather Underground API.</p>
+        <p><a href="http://www.wunderground.com"><img src="https://icons.wxug.com/logos/PNG/wundergroundLogo_4c_horz.png" alt="weather underground" width='175px'></a></p>
+        
+        </div>
+    </footer>
+</div>
+    <script>
+        var lat;
+        var long;
+        var name;
+        var icon;
+        var conditions;
+        var humidity;
+
+        var temp;
+        var highF;
+        var lowF;      
+        var tempF;
+        var vis_mi;
+        var windMPH;
+        var dewpointF;
+        var pressureIn;
+        
+
+        var tempM;
+        var highM;
+        var lowM;
+        var windM;
+        var pressureM;
+        var vis_km;
+        var dewpointM;
+
+
+        function getLocation() {
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                    
+                } else { 
+                    x.innerHTML = "Geolocation is not supported by this browser.";
+                }
+            
+            }
+            
+            function showPosition(position) {
+                lat =  position.coords.latitude; 
+                long = position.coords.longitude;
+                console.log(lat);
+                console.log(long);              
+                retrieveForecast();
+                                           
+            }
+
+            function  retrieveForecast(){    
+            
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET',`http://api.wunderground.com/api/551c2e813e6a8de7/conditions/forecast/q/${lat},${long}.json`, true);
+
+                xhr.onload = function(){
+                    if(this.status == 200){
+                        var forecast = JSON.parse(this.responseText);
+                        console.log(forecast);
+                        name = forecast.current_observation.display_location.full;
+
+                                           
+                        icon = forecast.current_observation.icon;
+                        tempF = forecast.current_observation.temp_f;                        
+                        vis_mi = forecast.current_observation.visibility_mi;
+                        conditions = forecast.current_observation.weather;
+                        windMPH = forecast.current_observation.wind_mph;
+                        dewpointF = forecast.current_observation.dewpoint_f;
+                        pressureIn = forecast.current_observation.pressure_in;
+                        humidity = forecast.current_observation.relative_humidity;
+                        highF = forecast.forecast.simpleforecast.forecastday[0].high.fahrenheit;
+                        lowF = forecast.forecast.simpleforecast.forecastday[0].low.fahrenheit;
+
+                        tempC = forecast.current_observation.temp_c;
+                        highM = forecast.forecast.simpleforecast.forecastday[0].high.celsius;
+                        lowM = forecast.forecast.simpleforecast.forecastday[0].low.celsius;
+                        windM = forecast.current_observation.wind_kph;
+                        pressureM = forecast.current_observation.pressure_mb;
+                        vis_km = forecast.current_observation.visibility_km;
+                        dewpointM = forecast.current_observation.dewpoint_c;
+
+                        } 
+                    document.getElementById('location').innerHTML = `${name}`;
+                    document.getElementById('temperature').innerHTML = `${tempF}<i class="wi wi-fahrenheit"></i>`; 
+                    document.getElementById('icon').className += ` wi-wu-${icon}`; 
+                    document.getElementById('visibility').innerHTML = ` ${vis_mi} miles`; 
+                    document.getElementById('description').innerHTML = `${conditions}`;
+                    document.getElementById('wind').innerHTML = `<i class="wi wi-strong-wind"></i> ${windMPH} mph`;
+                    document.getElementById('dewPoint').innerHTML = ` ${dewpointF}<i class="wi wi-fahrenheit"></i>`;
+                    document.getElementById('pressure').innerHTML = ` ${pressureIn} in`;
+                    document.getElementById('humidity').innerHTML = ` ${humidity}`;
+                    document.getElementById('range').innerHTML = `${highF}<i class="wi wi-fahrenheit"></i> / ${lowF}<i class="wi wi-fahrenheit"></i>`;
+                    
+                    document.getElementById('tempM').innerHTML =  ` ${tempC}<i class="wi wi-celsius"></i>`;
+                    document.getElementById('rangeM').innerHTML = `${highM}<i class="wi wi-celsius"></i> / ${lowM}<i class="wi wi-celsius"></i>`;
+                    document.getElementById('windM').innerHTML = `<i class="wi wi-strong-wind"></i> ${windM} kph`;
+                    document.getElementById('pressureM').innerHTML = ` ${pressureM} mb`;
+                    document.getElementById('visibilityM').innerHTML = ` ${vis_km} kilometers`;
+                    document.getElementById('dewpointM').innerHTML = ` ${dewpointM}<i class="wi wi-celsius"></i>`;
+
+
+
+
+
+                }
+                xhr.send();
+            }
+
+                
+        
+            function toggle() {   
+         
+                var x = document.querySelectorAll('.empirical');    
+                var y = document.querySelectorAll('.metric');
+            
+            console.table(x);
+            console.table(y);
+
+            for (i = 0; i < x.length; ++i) {
+                    if (x[i].style.display === "none") {
+                    x[i].style.display = "inline";
+                    } else {
+                    x[i].style.display = "none";
+                    }
+                }
+                
+            
+            for (j = 0; j < y.length; ++j) {
+                    if (y[j].style.display === "inline") {
+                    y[j].style.display = "none";
+                    } else {
+                    y[j].style.display = "inline";
+                    }
+                }
+            }
+
+            document.getElementById('main').addEventListener('click',toggle);
+    </script>
+
+
+
+    
+    
+</body>
+</html>

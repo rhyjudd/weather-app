@@ -1,0 +1,47 @@
+.flex-container{
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    display:flex;
+    flex-direction: column;
+    justify-content: bottom;
+    align-items: center;
+    text-align: center;
+    
+    font-family: 'Montserrat', sans-serif;
+    background: #fff;
+    color: #186be7;
+    
+}
+
+.section{
+    background: #fff;
+    margin: 20px;
+    padding: 20px;
+    /*border-radius: 10px;*/
+    /*min-height: 250px;*/    
+    min-width: 300px;
+    box-shadow: 1px 1px 5px #757181;
+    color: #186be7;
+    
+}
+
+
+
+#icon{
+    transform:scale(2,2);    
+}
+
+.metric{
+    display:none;
+}
+
+.empirical{
+    display:inline;
+
+}
+
+footer{
+    font-size: .75em;
+    
+}

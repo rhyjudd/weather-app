@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="weatherStyle.css">
+    <link rel="stylesheet" href="weather-icons.css">
+    <title>Local Weather</title>
+</head>
+<body class='flex-container' onLoad='getLocation()'>
+
+
+    <div class='section' >
+        <div ><h1 id='location'></h1></div>
+        <br>
+        <div><i class="wi " id='currentConditions' ></i></div>  
+        <div><h1 id='currentTemp'></h1></div> 
+        <div><h4 id='highTemp'></h4></div>
+        <div><h4 id='lowTemp'></h4></div>
+        <br>             
+        <div class='std-btn' id='getForecast'>Get Local Conditions</div>
+    </div>
+   
+
+
+
+    <script>
+            var x = document.getElementById('location');
+            var lat;
+            var long;
+            var name;
+            var temp;
+            var high;
+            var low;
+            var switchState;
+            var icon;
+            
+            function convertToFahrenheit(celsius){
+                return (celsius*1.8)+32;
+            }
+
+            function getLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                    
+                } else { 
+                    x.innerHTML = "Geolocation is not supported by this browser.";
+                }
+            }
+            
+            function showPosition(position) {
+                lat =  position.coords.latitude; 
+                long = position.coords.longitude;
+                                            
+            }
+
+            function  retrieveForecast(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET',`http://api.wunderground.com/api/551c2e813e6a8de7/conditions/forecast/q/${lat},${long}.json`, true);
+
+            xhr.onload = function(){
+                if(this.status == 200){
+                    var forecast = JSON.parse(this.responseText);
+                    console.log(forecast);
+                    name = forecast.current_observation.display_location.full;
+                    temp = forecast.current_observation.temperature_string;                   
+                    icon = forecast.current_observation.icon;
+                    icon = icon.replace("http://icons.wxug.com/i/c/k/", "http://icons.wxug.com/i/c/h/")
+                    console.log(icon);
+                    
+                    }
+                    document.getElementById('location').innerHTML = name;
+                    document.getElementById('currentTemp').innerHTML = `${temp} F`; 
+                    document.getElementById('currentConditions').className += ` wi-wu-${icon}`;
+                    
+                                  
+
+
+                
+                
+            }
+            xhr.send();
+        }
+
+        
+
+
+document.getElementById('getForecast').addEventListener('click', retrieveForecast);
+            
+
+             
+            </script>
+    
+</body>
+</html>
